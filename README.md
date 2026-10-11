@@ -17,4 +17,4 @@ ITS-4.0/
 ├── README.md
 ├── ASSETS.md
 └── knowledge/
-    └── resources.jsonra può essere più lenta. In una versione di produzione è preferibile scaricare i GLB nel repository in `assets/models/` e servire le copie locali.
+    └── resources.json
