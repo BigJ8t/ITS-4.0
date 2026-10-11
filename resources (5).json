@@ -1,0 +1,73 @@
+{
+  "handouts": [
+    {
+      "id": "service-recovery",
+      "title": "Service Recovery",
+      "category": "Guest Experience",
+      "summary": "Metodo operativo per gestire un disservizio senza perdere ownership dell’esperienza.",
+      "body": [
+        "Riconosci il problema e il suo impatto sull’ospite.",
+        "Assumi la responsabilità della gestione, anche quando la causa è esterna.",
+        "Raccogli rapidamente dati verificabili.",
+        "Proponi alternative realistiche con tempi, costi e limiti.",
+        "Conferma la soluzione e verifica l’esito."
+      ],
+      "tip": "L’ospite deve sapere chi sta agendo, cosa sta accadendo e quando riceverà il prossimo aggiornamento."
+    },
+    {
+      "id": "transfer",
+      "title": "Gestione transfer e concierge",
+      "category": "Operations",
+      "summary": "Checklist per valutare taxi, NCC e altri servizi sostitutivi.",
+      "body": [
+        "Ora dell’appuntamento e margine residuo.",
+        "Tempo di arrivo del mezzo.",
+        "Tempo di percorrenza stimato.",
+        "Costo e condizioni.",
+        "Affidabilità del fornitore.",
+        "Targa, contatto e conferma finale."
+      ],
+      "tip": "Non confrontare le opzioni solo sul tempo di arrivo del mezzo."
+    },
+    {
+      "id": "priorities",
+      "title": "Gestione delle priorità",
+      "category": "Professional skills",
+      "summary": "Come ordinare più richieste contemporanee senza perdere controllo operativo.",
+      "body": [
+        "Urgenza: quanto rapidamente cambia il rischio?",
+        "Impatto: cosa succede al cliente se rimando?",
+        "Dipendenza: quale task blocca gli altri?",
+        "Tempo di chiusura: posso completare un’attività quasi conclusa?",
+        "Comunicazione: chi attende sa quando verrà preso in carico?"
+      ],
+      "tip": "Prioritizzare non significa ignorare: significa ordinare, comunicare e chiudere."
+    },
+    {
+      "id": "communication",
+      "title": "Comunicazione sotto pressione",
+      "category": "Soft skills",
+      "summary": "Struttura per messaggi brevi, rassicuranti e verificabili.",
+      "body": [
+        "Riconosci il problema.",
+        "Spiega l’azione in corso.",
+        "Evita promesse non verificate.",
+        "Dai un tempo per il prossimo aggiornamento.",
+        "Conferma la soluzione finale."
+      ],
+      "tip": "Meno parole, più chiarezza operativa."
+    },
+    {
+      "id": "udl",
+      "title": "UDL nella simulazione ITSphere",
+      "category": "Accessibilità",
+      "summary": "La simulazione applica i tre principi UDL per rendere l’esperienza formativa più accessibile e adattabile.",
+      "body": [
+        "Coinvolgimento: obiettivi chiari, feedback, scelta e contesto realistico.",
+        "Rappresentazione: scena 3D, testo, dialogo in sovraimpressione, KPI e dispense.",
+        "Azione ed espressione: decisioni multiple, gestione priorità, replay vocale e percorsi diversi."
+      ],
+      "tip": "UDL non significa semplificare il contenuto: significa offrire più modi per comprenderlo e agire."
+    }
+  ]
+}

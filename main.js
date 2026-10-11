@@ -64,10 +64,85 @@ function prepareCharacter(gltf,opts){
 function resetRig(c){if(!c?.userData?.rig)return;Object.values(c.userData.rig).forEach(n=>{if(n?.userData?.baseRot)n.rotation.copy(n.userData.baseRot)});c.rotation.y=c.userData.baseY}
 function animateCharacter(c,t){if(!c?.userData?.rig)return;resetRig(c);c.position.y=c.userData.home.y+Math.sin(t*1.5+c.userData.phase)*.012;const r=c.userData.rig;if(r.head)r.head.rotation.y+=Math.sin(t*.7+c.userData.phase)*.03;if(c===speaking&&r.jaw)r.jaw.rotation.x+=(.5+.5*Math.sin(t*14))*.045}
 function gesture(type){if(!staff?.userData?.rig)return;const r=staff.userData.rig;resetRig(staff);if(type==="phone"){if(r.rightArm)r.rightArm.rotation.z+=.55;if(r.rightFore)r.rightFore.rotation.x-=1.1}else if(type==="screen"){if(r.leftArm)r.leftArm.rotation.z-=.35}else if(type==="point"){if(r.rightArm)r.rightArm.rotation.z+=.35}}
-async function loadModels(){const loader=new GLTFLoader(),manifest=await fetch("./models/manifest.json").then(r=>r.json()),load=n=>new Promise((res,rej)=>loader.load("./models/"+n,res,undefined,rej));const [r,m,f]=await Promise.all([load(manifest.receptionist),load(manifest.guest_male),load(manifest.guest_female)]);staff=prepareCharacter(r,{height:1.72,x:-1.25,z:-2.18,rotationY:0,role:"staff",label:"Giulia Rossi"});guestMale=prepareCharacter(m,{height:1.82,x:.55,z:-.12,rotationY:Math.PI,role:"guest",label:"Mr. Taylor"});guestFemale=prepareCharacter(f,{height:1.70,x:1.45,z:.10,rotationY:Math.PI,role:"guest",label:"Mrs. Taylor"});speaking=staff}
+async function fetchJSON(paths,label){
+  let lastError=null;
+  for(const path of paths){
+    try{
+      const response=await fetch(path,{cache:"no-store"});
+      if(!response.ok){
+        lastError=new Error(`${label}: ${path} → HTTP ${response.status}`);
+        continue;
+      }
+      const text=await response.text();
+      const trimmed=text.trim();
+      if(trimmed.startsWith("<")){
+        lastError=new Error(`${label}: ${path} restituisce HTML invece di JSON`);
+        continue;
+      }
+      return {data:JSON.parse(text),path};
+    }catch(err){
+      lastError=err;
+    }
+  }
+  throw lastError||new Error(`${label} non disponibile`);
+}
+
+async function loadModels(){
+  const loader=new GLTFLoader();
+  const manifestResult=await fetchJSON(["./models/manifest.json","./manifest.json"],"Manifest modelli");
+  const manifest=manifestResult.data;
+
+  const loadCandidates=(filename)=>new Promise(async (resolve,reject)=>{
+    const candidates=[
+      `./models/${filename}`,
+      `./${filename}`
+    ];
+    let lastErr=null;
+    for(const url of candidates){
+      try{
+        const gltf=await new Promise((res,rej)=>loader.load(url,res,undefined,rej));
+        resolve(gltf);
+        return;
+      }catch(err){
+        lastErr=err;
+      }
+    }
+    reject(lastErr||new Error(`Modello non trovato: ${filename}`));
+  });
+
+  const [r,m,f]=await Promise.all([
+    loadCandidates(manifest.receptionist),
+    loadCandidates(manifest.guest_male),
+    loadCandidates(manifest.guest_female)
+  ]);
+
+  staff=prepareCharacter(r,{height:1.72,x:-1.25,z:-2.18,rotationY:0,role:"staff",label:"Giulia Rossi"});
+  guestMale=prepareCharacter(m,{height:1.82,x:.55,z:-.12,rotationY:Math.PI,role:"guest",label:"Mr. Taylor"});
+  guestFemale=prepareCharacter(f,{height:1.70,x:1.45,z:.10,rotationY:Math.PI,role:"guest",label:"Mrs. Taylor"});
+  speaking=staff;
+}
 function fallback(){const make=(x,z,c,role,rot)=>{const g=new THREE.Group();const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.22,.55,8,16),mat(c)),head=new THREE.Mesh(new THREE.SphereGeometry(.16,20,16),mat(0xd7a17e));torso.position.y=1.25;head.position.y=1.82;g.add(torso,head);g.position.set(x,0,z);g.rotation.y=rot;g.userData={role,label:role,baseY:rot,home:new THREE.Vector3(x,0,z),phase:0,rig:null};scene.add(g);return g};staff=make(-1.25,-2.18,0x2d6668,"staff",0);guestMale=make(.55,-.12,0x536b84,"guest",Math.PI);guestFemale=make(1.45,.1,0x9a6f59,"guest",Math.PI);speaking=staff;UI.badge.textContent="Fallback 3D attivo"}
 
-async function loadData(){simData=await fetch("./data/scenarios.json",{cache:"no-store"}).then(r=>r.json());const rd=await fetch("./data/resources.json",{cache:"no-store"}).then(r=>r.json());resources=rd.handouts||[];renderResourceList("");setStep(0)}
+async function loadData(){
+  const scenarioResult=await fetchJSON(
+    ["./data/scenarios.json","./scenarios.json"],
+    "Scenari"
+  );
+  const resourceResult=await fetchJSON(
+    ["./data/resources.json","./resources.json"],
+    "Dispense"
+  );
+
+  simData=scenarioResult.data;
+  resources=resourceResult.data.handouts||[];
+
+  if(!simData?.steps?.length){
+    throw new Error("scenarios.json è valido ma non contiene steps");
+  }
+
+  renderResourceList("");
+  setStep(0);
+}
 function setStep(i){stepIndex=i;currentStep=simData.steps[i];selected=null;dialogueIndex=0;priorityOrder=currentStep.priorities.map((p,j)=>({title:p[0],level:p[1],detail:p[2],id:j}));score={problem:0,communication:0,guest:0,priority:0};lastKpi=null;lastUdl={engagement:0,representation:0,action:0};renderStep();setDialogue(currentStep.dialogue[0]);speaking=staff;UI.overlay.classList.remove("hidden")}
 function renderStep(){
  const totalSteps=simData.steps.length;UI.stepPill.textContent=`Scenario ${stepIndex+1}/${totalSteps}`;UI.stepNumber.textContent=`Scenario ${stepIndex+1} di ${totalSteps}`;UI.progress.textContent=`${Math.round((stepIndex+1)/totalSteps*100)}%`;
@@ -85,7 +160,12 @@ function selectChoice(id){
  setDialogue(["GR","Giulia Rossi · Guest Relations",c.nextLine]);speaking=staff;gesture(c.id.endsWith("b")?"screen":c.id.endsWith("a")?"phone":"point");speak(c.nextLine);updateScores();renderKPI();renderUDL();UI.nextScenario.disabled=false;UI.overlay.classList.remove("hidden");
 }
 function updateScores(){const total=Math.round((score.problem+score.communication+score.guest+score.priority)/4);UI.scoreTotal.textContent=`${total} / 100`;const vals=[["Problem",score.problem],["Comm",score.communication],["Guest",score.guest],["Priority",score.priority]];for(const [k,v] of vals){UI["score"+k].textContent=v;UI["bar"+k].style.width=v+"%"}}
-function setDialogue(d){UI.overlayAvatar.textContent=d[0];UI.overlaySpeaker.textContent=d[2];UI.overlayRole.textContent=d[1];UI.overlayText.textContent=d[3]||d[2]}
+function setDialogue(d){
+  UI.overlayAvatar.textContent=d[0]||"GR";
+  UI.overlaySpeaker.textContent=d[1]||"Giulia Rossi · Guest Relations";
+  UI.overlayRole.textContent=d[0]==="GR"?"Guest Relations":"Ospite";
+  UI.overlayText.textContent=d[2]||"";
+}
 function nextDialogue(){dialogueIndex=(dialogueIndex+1)%currentStep.dialogue.length;const d=currentStep.dialogue[dialogueIndex];UI.overlayAvatar.textContent=d[0];UI.overlaySpeaker.textContent=d[1];UI.overlayRole.textContent=d[0]==="GR"?"Guest Relations":"Ospite";UI.overlayText.textContent=d[2];speaking=d[0]==="GR"?staff:(dialogueIndex%2?guestMale:guestFemale)}
 function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="it-IT";u.rate=.95;speechSynthesis.speak(u)}catch{}}
 
