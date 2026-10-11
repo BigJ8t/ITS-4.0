@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ITSphere - simulatore professionale 3D per la formazione ITS nel settore hospitality." />
+  <title>ITSphere | Hospitality Simulation</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="brand-row"><span class="brand-mark">ITS</span><span class="brand-name">ITSPHERE</span></div>
+        <p class="subtitle">Adaptive Professional Simulation · Hospitality</p>
+      </div>
+      <div class="status-cluster"><span class="status-pill">Scenario: Guest Experience</span><span class="status-pill status-live">Live simulation</span></div>
+    </header>
+    <div class="feature-toolbar" aria-label="Strumenti simulazione">
+      <button id="voiceToggle" class="feature-btn is-on" type="button" aria-pressed="true">🔊 Voce ON</button>
+      <button id="resourcesToggle" class="feature-btn" type="button">📚 Consulta dispense</button>
+      <button id="focusToggle" class="feature-btn" type="button" aria-pressed="false">◐ Modalità focus</button>
+      <span id="performanceBadge" class="perf-badge">Auto quality</span>
+    </div>
+
+    <section class="workspace">
+      <section class="simulation-column">
+        <div class="scene-card">
+          <div class="scene-toolbar">
+            <div><p class="micro-label">AMBIENTE 3D</p><h1>Boutique Hotel Lobby</h1></div>
+            <div class="camera-tabs" aria-label="Viste camera">
+              <button class="camera-btn active" data-view="overview">Overview</button>
+              <button class="camera-btn" data-view="desk">Desk</button>
+              <button class="camera-btn" data-view="lounge">Lounge</button>
+              <button class="camera-btn" data-view="concierge">Concierge</button>
+            </div>
+          </div>
+
+          <div id="sceneWrap" class="scene-wrap" aria-label="Simulazione 3D hotel">
+            <canvas id="threeCanvas"></canvas>
+            <div id="loading" class="loading-state"><div class="loader"></div><span>Caricamento ambiente 3D…</span></div>
+
+            <div class="scene-hud">
+              <div class="hud-card"><span class="hud-kicker">TEMPO ALL'APPUNTAMENTO</span><strong id="timerDisplay">40:00</strong></div>
+              <div class="hud-card hud-transfer"><span class="hud-kicker">TRANSFER STATUS</span><strong id="transferStatus">CANCELLED</strong><small id="transferDetail">Fornitore non disponibile</small></div>
+            </div>
+
+            <div id="actionOverlay" class="action-overlay" aria-live="polite"><span class="action-kicker">AZIONE SCELTA</span><strong id="actionText"></strong></div>
+
+            <div id="dialogueOverlay" class="dialogue-overlay" aria-live="polite">
+              <div class="dialogue-avatar" id="dialogueAvatar">GR</div>
+              <div class="dialogue-copy"><span class="dialogue-role" id="dialogueRole">Guest Relations</span><strong id="dialogueName">Giulia Rossi</strong><p id="dialogueText"></p><div class="dialogue-tools"><button id="replayVoice" class="mini-btn" type="button">🔁 Riascolta</button><button id="skipDialogue" class="mini-btn" type="button">Salta dialogo</button></div></div>
+            </div>
+
+            <div id="objectHint" class="object-hint" aria-live="polite"></div>
+          </div>
+
+          <div class="scene-footer">
+            <p>Trascina per ruotare. Usa la rotella del mouse per lo zoom. Seleziona alcuni oggetti per scoprire la loro funzione.</p>
+            <div class="scene-control-row"><button id="rotateLeft" class="icon-btn" aria-label="Ruota a sinistra">↺</button><button id="rotateRight" class="icon-btn" aria-label="Ruota a destra">↻</button><button id="zoomIn" class="icon-btn" aria-label="Avvicina">＋</button><button id="zoomOut" class="icon-btn" aria-label="Allontana">−</button></div>
+          </div>
+        </div>
+
+        <section class="accessible-dialogue-panel">
+          <div class="panel-heading"><div><p class="micro-label">TRASCRIZIONE ACCESSIBILE</p><h2>Dialogo e conseguenze</h2></div><span id="dialogueState" class="step-chip">In attesa</span></div>
+          <div id="dialogueLog" class="dialogue-log" aria-live="polite"><p class="empty-log">Le conversazioni appariranno qui dopo una scelta.</p></div>
+        </section>
+      </section>
+
+      <aside class="side-panel">
+        <section class="scenario-card">
+          <div class="panel-heading"><div><p class="micro-label">SCENARIO PROFESSIONALE</p><h2>Transfer cancellato</h2></div><span id="stepChip" class="step-chip">1 / 3</span></div>
+          <p id="situationText" class="scenario-text"></p>
+          <div class="objective-box"><span>OBIETTIVO</span><p>Gestire l'imprevisto preservando esperienza dell'ospite, tempi e qualità del servizio.</p></div>
+        </section>
+
+        <section class="decision-card">
+          <div class="panel-heading"><div><p class="micro-label">DECISIONE</p><h2>Cosa fai?</h2></div></div>
+          <div id="choices" class="choice-list"></div>
+          <div class="decision-actions"><button id="supportBtn" class="support-btn">🧭 Supporto UDL</button><button id="quickResourceBtn" class="support-btn" type="button">📖 Risorsa rapida</button></div>
+          <div id="supportBox" class="support-box"><strong>Quali elementi considerare?</strong><ul><li>Tempo disponibile</li><li>Aspettative dell'ospite</li><li>Alternative realistiche</li><li>Affidabilità e costo</li><li>Conseguenze della scelta</li></ul></div>
+          <button id="continueBtn" class="primary-btn">Continua</button>
+        </section>
+
+        <section id="feedbackCard" class="feedback-card">
+          <p class="micro-label">EFFETTO DELLA DECISIONE</p><h2 id="feedbackTitle">—</h2><p id="feedbackText">Il feedback apparirà dopo la sequenza.</p>
+          <div class="why-box"><span>PERCHÉ È RILEVANTE</span><p id="feedbackWhy">—</p></div>
+        </section>
+
+        <section class="skills-card">
+          <div class="panel-heading"><div><p class="micro-label">COMPETENZE OSSERVATE</p><h2>Performance</h2></div><strong id="totalScore">0 pt</strong></div>
+          <div class="skill"><div><span>Problem solving</span><strong id="problemValue">0</strong></div><div class="progress"><span id="problemBar"></span></div></div>
+          <div class="skill"><div><span>Comunicazione</span><strong id="communicationValue">0</strong></div><div class="progress"><span id="communicationBar"></span></div></div>
+          <div class="skill"><div><span>Priorità</span><strong id="priorityValue">0</strong></div><div class="progress"><span id="priorityBar"></span></div></div>
+          <div class="skill"><div><span>Adattabilità</span><strong id="adaptabilityValue">0</strong></div><div class="progress"><span id="adaptabilityBar"></span></div></div>
+        </section>
+
+        <section class="analytics-card">
+          <p class="micro-label">LEARNING ANALYTICS</p>
+          <div class="analytics-grid"><div><span>Tempo decisione</span><strong id="decisionTime">0.0 s</strong></div><div><span>Supporti richiesti</span><strong id="helpRequests">0</strong></div><div><span>Risorse consultate</span><strong id="resourceCount">0</strong></div><div><span>Decisioni</span><strong id="decisionCount">0</strong></div></div>
+          <button id="resetBtn" class="ghost-btn">Ricomincia simulazione</button>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <aside id="resourceDrawer" class="resource-drawer" aria-hidden="true" aria-label="Centro risorse didattiche">
+    <div class="drawer-header">
+      <div><p class="micro-label">CENTRO RISORSE</p><h2>Consulta le dispense</h2></div>
+      <button id="closeResources" class="icon-btn" type="button" aria-label="Chiudi risorse">×</button>
+    </div>
+    <label class="search-label" for="resourceSearch">Cerca argomento</label>
+    <div class="search-row"><input id="resourceSearch" type="search" placeholder="Es. reclamo, priorità, transfer…"><button id="clearSearch" class="mini-btn" type="button">Pulisci</button></div>
+    <div class="resource-layout">
+      <nav id="resourceList" class="resource-list" aria-label="Elenco dispense"></nav>
+      <article id="resourceContent" class="resource-content" tabindex="0"><p class="empty-log">Seleziona una risorsa per leggerne il contenuto.</p></article>
+    </div>
+    <div class="drawer-footer"><span id="resourceStatus">0 risorse consultate</span><button id="closeResourcesBottom" class="primary-inline" type="button">Torna alla simulazione</button></div>
+  </aside>
+  <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
