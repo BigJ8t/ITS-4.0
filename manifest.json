@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "receptionist": "receptionist.glb",
+  "guest_male": "guest_male.glb",
+  "guest_female": "guest_female.glb"
+}

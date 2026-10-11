@@ -1,0 +1,24 @@
+{
+  "resources": [
+    {
+      "title": "Gestione del disservizio",
+      "category": "Customer care",
+      "description": "Schema operativo: riconoscere il problema, comunicare con trasparenza, proporre alternative e confermare il nuovo piano."
+    },
+    {
+      "title": "Comunicazione con ospiti sotto stress",
+      "category": "Soft skill",
+      "description": "Usare messaggi brevi, rassicuranti e concreti; evitare promesse non verificate; offrire tempi di aggiornamento chiari."
+    },
+    {
+      "title": "UDL — molteplici modalità di supporto",
+      "category": "Accessibilità",
+      "description": "La simulazione combina testo, scena 3D e feedback sintetico per offrire più modalità di accesso alle informazioni."
+    },
+    {
+      "title": "Escalation operativa",
+      "category": "Hospitality",
+      "description": "Coinvolgere un responsabile quando servono autorizzazioni economiche o decisioni fuori dalla propria autonomia."
+    }
+  ]
+}
