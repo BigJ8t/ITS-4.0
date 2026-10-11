@@ -1,24 +1,16 @@
-[
-  {
-    "id": "service-recovery",
-    "title": "Service Recovery",
-    "category": "Guest Experience",
-    "keywords": [
-      "reclamo",
-      "errore",
-      "ospite",
-      "disservizio",
-      "cliente"
-    ],
-    "summary": "Gestire un disservizio senza lasciare il cliente solo.",
-    "sections": [
-      {
-        "heading": "Principio",
-        "body": "Prendere in carico il problema, chiarire cosa sta accadendo, proporre alternative realistiche e mantenere l'ospite aggiornato."
-      },
-      {
-        "heading": "Passaggi",
-        "bullets": [
+js
+async function loadResources(){
+  for(const path of ["./resources.json","./knowledge/resources.json"]){
+    try{
+      const r=await fetch(path,{cache:"no-store"});
+      if(!r.ok)continue;
+      resources=await r.json();
+      renderResourceList("");
+      return;
+    }catch(e){}
+  }
+  UI.resourceList.innerHTML="<p class='empty-log'>Dispense non disponibili. Verifica che resources.json sia nella stessa cartella di index.html.</p>";
+}
           "Riconoscere l'impatto sull'ospite.",
           "Raccogliere rapidamente le informazioni essenziali.",
           "Individuare alternative.",
