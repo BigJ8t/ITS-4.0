@@ -1,4 +1,3 @@
-ITSphere Human Models v8
-harper.glb and jordan.glb are included locally.
-No Innerscene/CORS dependency.
-Character motion falls back to articulated node animation when GLB clips are absent.
+ITSphere Human Scene
+Receptionist dietro il desk, ospiti davanti al desk, tre modelli GLB locali.
+Nessuna dipendenza esterna per i personaggi 3D.

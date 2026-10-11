@@ -115,8 +115,9 @@ const views={overview:{p:[9.5,5.4,10.5],t:[0,1.45,0]},desk:{p:[4.8,3.25,5.8],t:[
 let resources=[],activeResource=null;
 const gltfLoader=new GLTFLoader();
 const PREMIUM_MODEL_URLS={
-  receptionist:["./models/harper.glb"],
-  guest:["./models/jordan.glb"]
+  receptionist:"./models/receptionist.glb",
+  guestMale:"./models/guest_male.glb",
+  guestFemale:"./models/guest_female.glb"
 };
 let premiumMode=false;
 let speakingCharacter=null;
@@ -249,7 +250,7 @@ function playPremiumClip(character,candidates,{loop=true,fade=.22}={}){
 }
 function setupPremiumCharacter(source,animations,{x,z,height=1.98,tint=0xffffff,tintAmount=.1,role="guest",rotationY=0,label=""}={}){
   const wrapper=new THREE.Group();
-  wrapper.position.set(x,0,z);wrapper.userData.home=new THREE.Vector3(x,0,z);wrapper.userData.walking=false;wrapper.userData.phase=Math.random()*6;wrapper.userData.kind="premium";wrapper.userData.role=role;wrapper.userData.label=label;
+  wrapper.position.set(x,0,z);wrapper.userData.home=new THREE.Vector3(x,0,z);wrapper.userData.walking=false;wrapper.userData.phase=Math.random()*6;wrapper.userData.kind="premium";wrapper.userData.role=role;wrapper.userData.label=label;wrapper.userData.baseRotationY=0;
   const visual=SkeletonUtils.clone(source);
   tintModel(visual,tint,tintAmount);
   scaleAndCenterModel(visual,height,rotationY);
@@ -282,40 +283,45 @@ async function getModelManifest(){
 async function loadPremiumCharacters(){
   const manifest=await getModelManifest();
   if(!manifest?.enabled){
-    if(UI.characterModeBadge)UI.characterModeBadge.textContent="Modelli locali non installati";
-    console.info("Personaggi GLB disattivati. Carica models/harper.glb e models/jordan.glb, poi imposta enabled:true in models/manifest.json.");
+    if(UI.characterModeBadge)UI.characterModeBadge.textContent="Modelli 3D disattivati";
     return;
   }
-  if(UI.characterModeBadge)UI.characterModeBadge.textContent="Caricamento persone realistiche…";
+
+  if(UI.characterModeBadge)UI.characterModeBadge.textContent="Caricamento personaggi umani 3D…";
+
   try{
-    const [harper,jordan]=await Promise.all([
-      loadGLB(PREMIUM_MODEL_URLS.receptionist),
-      loadGLB(PREMIUM_MODEL_URLS.guest)
+    const paths={
+      receptionist:`./models/${manifest.receptionist||"receptionist.glb"}`,
+      guestMale:`./models/${manifest.guest_male||"guest_male.glb"}`,
+      guestFemale:`./models/${manifest.guest_female||"guest_female.glb"}`
+    };
+
+    const [receptionistModel,maleModel,femaleModel]=await Promise.all([
+      loadGLB(paths.receptionist),
+      loadGLB(paths.guestMale),
+      loadGLB(paths.guestFemale)
     ]);
 
-    const old=[staff,guestA,guestB,newGuest];
-    old.forEach(c=>{if(c)world.remove(c)});
+    [staff,guestA,guestB,newGuest].forEach(c=>{if(c)world.remove(c)});
 
-    // Receptionist: donna in business clothes, dietro il bancone.
-    staff=setupPremiumCharacter(harper.scene,harper.animations,{
-      x:-1.55,z:-1.92,height:1.74,tint:0xffffff,tintAmount:0,
-      role:"staff",rotationY:Math.PI,label:"Giulia Rossi"
+    // Receptionist: sempre dietro il desk, rivolta verso gli ospiti.
+    staff=setupPremiumCharacter(receptionistModel.scene,receptionistModel.animations,{
+      x:-1.55,z:-2.12,height:1.72,tint:0xffffff,tintAmount:0,
+      role:"staff",rotationY:0,label:"Giulia Rossi"
     });
 
-    // Ospite uomo in business/casual clothes.
-    guestA=setupPremiumCharacter(jordan.scene,jordan.animations,{
-      x:.70,z:.20,height:1.83,tint:0xffffff,tintAmount:0,
+    // Ospiti davanti al desk, orientati verso la receptionist.
+    guestA=setupPremiumCharacter(maleModel.scene,maleModel.animations,{
+      x:.58,z:-.02,height:1.82,tint:0xffffff,tintAmount:0,
       role:"guest",rotationY:Math.PI,label:"Mr. Taylor"
     });
 
-    // Ospite donna: clone del modello Harper, senza badge da receptionist.
-    guestB=setupPremiumCharacter(harper.scene,harper.animations,{
-      x:1.55,z:.42,height:1.70,tint:0xffffff,tintAmount:0,
+    guestB=setupPremiumCharacter(femaleModel.scene,femaleModel.animations,{
+      x:1.42,z:.18,height:1.70,tint:0xffffff,tintAmount:0,
       role:"guest",rotationY:Math.PI,label:"Mrs. Taylor"
     });
 
-    // Secondo ospite uomo.
-    newGuest=setupPremiumCharacter(jordan.scene,jordan.animations,{
+    newGuest=setupPremiumCharacter(maleModel.scene,maleModel.animations,{
       x:6,z:.8,height:1.79,tint:0xffffff,tintAmount:0,
       role:"guest",rotationY:Math.PI,label:"Nuovo ospite"
     });
@@ -323,16 +329,15 @@ async function loadPremiumCharacters(){
 
     premiumMode=true;
     if(UI.characterModeBadge){
-      UI.characterModeBadge.textContent="Persone realistiche · GLB";
+      UI.characterModeBadge.textContent="Personaggi umani 3D · Local";
       UI.characterModeBadge.classList.remove("is-fallback");
       UI.characterModeBadge.classList.add("is-premium");
     }
   }catch(err){
-    console.warn("Modelli GLB locali non disponibili: uso fallback 3D. Verifica models/harper.glb e models/jordan.glb.",err);
+    console.error("Errore caricamento modelli umani locali",err);
     premiumMode=false;
-    // Il fallback resta operativo, ma viene mantenuto dietro la UI senza spacciarlo per modello realistico.
     if(UI.characterModeBadge){
-      UI.characterModeBadge.textContent="Modelli umani non caricati";
+      UI.characterModeBadge.textContent="Errore modelli 3D";
       UI.characterModeBadge.classList.remove("is-premium");
       UI.characterModeBadge.classList.add("is-fallback");
     }
@@ -341,6 +346,7 @@ async function loadPremiumCharacters(){
 function resetPremiumPose(c){
   if(!c?.userData?.rig)return;
   resetRig(c.userData.rig);
+  c.rotation.y=c.userData.baseRotationY??0;
   if(c.userData.mixer)playPremiumClip(c,["idle"],{loop:true});
 }
 function applyRigOffset(bone,x=0,y=0,z=0){if(!bone)return;bone.rotation.x+=x;bone.rotation.y+=y;bone.rotation.z+=z}
@@ -373,6 +379,19 @@ function setPremiumPose(c,name){
     applyRigOffset(r.head,.04,0,0);
   }
 }
+
+function createCharacterPlaceholder(x,z,role){
+  const g=new THREE.Group();
+  g.position.set(x,0,z);
+  g.userData.role=role;
+  g.userData.home=new THREE.Vector3(x,0,z);
+  g.userData.walking=false;
+  g.userData.phase=0;
+  g.userData.kind="placeholder";
+  world.add(g);
+  return g;
+}
+
 function createCharacter(x,z,uniform,hair,role){
   const g=new THREE.Group();
   g.position.set(x,0,z);
@@ -584,7 +603,7 @@ function buildWorld(){
   box([2.2,.92,.78],[-4.9,.46,.55],0x88705c,{roughness:.7});box([2.26,.09,.84],[-4.9,.97,.55],0xe5ddd0,{roughness:.4});const cs=label("CONCIERGE","#566f72",620,48);cs.scale.set(.73,.73,.73);cs.position.set(-4.9,2.3,-.22);world.add(cs);
   board=dynamicBoard();board.position.set(-5,1.95,.45);board.rotation.y=.12;world.add(board);updateBoard("CANCELLED","Nessuna alternativa attiva");
   plant(-6.2,-3.6);plant(6.2,3.9,1.05);plant(4.9,-3.8,.85);
-  staff=createCharacter(-1.55,-.1,0x2f5a60,0x342722,"staff"); guestA=createCharacter(.75,.18,0x8e6b58,0x4a362c,"guest"); guestB=createCharacter(1.55,.4,0x62738b,0x4a3428,"guest"); newGuest=createCharacter(6,.8,0x6a7868,0x332a25,"guest"); newGuest.visible=false; setPose(staff,"neutral");
+  staff=createCharacterPlaceholder(-1.55,-2.12,"staff"); guestA=createCharacterPlaceholder(.58,-.02,"guest"); guestB=createCharacterPlaceholder(1.42,.18,"guest"); newGuest=createCharacterPlaceholder(6,.8,"guest"); newGuest.visible=false;
   interactive.push(monitor,phone,board)
 }
 
@@ -627,7 +646,7 @@ function setView(n){const v=views[n];if(!v)return;desiredPos.set(...v.p);desired
 function renderStep(){const s=scenario[state.step];UI.step.textContent=`${state.step+1} / ${scenario.length}`;UI.situation.textContent=s.situation;UI.choices.innerHTML="";UI.continueBtn.classList.remove("show");UI.feedbackCard.classList.remove("active");UI.feedbackTitle.textContent="—";UI.feedbackText.textContent="Il feedback apparirà dopo la sequenza.";UI.feedbackWhy.textContent="—";UI.dialogueState.textContent="In attesa";UI.supportBox.classList.remove("show");s.choices.forEach((c,i)=>{const b=document.createElement("button");b.className="choice-btn";b.type="button";b.innerHTML=`<strong>${String.fromCharCode(65+i)}.</strong> ${c.label}`;b.addEventListener("click",()=>choose(c,b));UI.choices.appendChild(b)});newGuest.visible=state.step===2;if(state.step===2)newGuest.position.set(6,0,.8);metrics()}
 async function choose(c,b){if(state.locked||selected)return;selected=c;state.locked=true;state.decisionCount++;const dt=(performance.now()-state.stepStart)/1000;state.metrics.push({step:state.step+1,choice:c.id,decisionTimeSeconds:+dt.toFixed(2),helpRequests:state.helpRequests,resources:[...state.resources]});UI.decisionTime.textContent=`${dt.toFixed(1)} s`;UI.decisionCount.textContent=state.decisionCount;[...UI.choices.children].forEach(x=>x.disabled=true);b.classList.add("selected");Object.keys(state.scores).forEach(k=>state.scores[k]+=c.scores[k]||0);state.remainingMinutes=Math.max(0,state.remainingMinutes-c.loss);UI.timer.textContent=`${String(state.remainingMinutes).padStart(2,"0")}:00`;UI.transferStatus.textContent=c.status[0];UI.transferDetail.textContent=c.status[1];updateBoard(...c.status);metrics();await playSequence(c);UI.feedbackTitle.textContent=c.feedback[0];UI.feedbackText.textContent=c.feedback[1];UI.feedbackWhy.textContent=c.feedback[2];UI.feedbackCard.classList.add("active");UI.continueBtn.textContent=state.step===scenario.length-1?"Mostra risultato finale":"Continua";UI.continueBtn.classList.add("show");UI.dialogueState.textContent="Sequenza completata";state.locked=false}
 async function playSequence(c){UI.actionText.textContent=c.action;UI.actionOverlay.classList.add("show");desiredPos.set(4.65,3.05,4.65);desiredTarget.set(-.15,1.35,-.25);await wait(reduced?250:850);UI.actionOverlay.classList.remove("show");UI.dialogueLog.innerHTML="";UI.dialogueState.textContent="Dialogo in corso";state.skip=false;for(const line of c.sequence){if(state.skip)break;const char={staff,guestA,guestB,newGuest}[line.actor];await action(char,line.anim);UI.dialogueAvatar.textContent=line.avatar;UI.dialogueRole.textContent=line.role;UI.dialogueName.textContent=line.name;UI.dialogueText.textContent=line.text;UI.dialogueOverlay.classList.add("show");appendLog(line);state.lastLine=line;const speakPromise=speak(line);await Promise.race([wait(reduced?350:Math.min(2600,1100+line.text.length*14)),speakPromise])}UI.dialogueOverlay.classList.remove("show");stopSpeech();[staff,guestA,guestB,newGuest].forEach(resetPose);await wait(reduced?100:350);setView("overview")}
-async function action(char,anim){if(anim==="walk_phone"){await walk(staff,new THREE.Vector3(-1.02,0,-.28),.9);setPose(staff,"phone")}else if(anim==="walk_in"){newGuest.visible=true;await walk(newGuest,new THREE.Vector3(4.7,0,.35),1.1);setPose(newGuest,"upset")}else setPose(char,anim)}
+async function action(char,anim){if(anim==="walk_phone"){await walk(staff,new THREE.Vector3(-1.02,0,-2.05),.9);setPose(staff,"phone")}else if(anim==="walk_in"){newGuest.visible=true;await walk(newGuest,new THREE.Vector3(4.7,0,.35),1.1);setPose(newGuest,"upset")}else setPose(char,anim)}
 function walk(char,target,speed){if(reduced){char.position.copy(target);return Promise.resolve()}if(char?.userData?.kind==="premium")playPremiumClip(char,["walk"],{loop:true});return new Promise(resolve=>{char.userData.walking=true;char.userData.target=target.clone();char.userData.speed=speed;char.userData.resolve=resolve})}
 function updateMotion(char,dt,t){
   if(!char||!char.visible)return;
