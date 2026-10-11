@@ -1,0 +1,471 @@
+{
+  "title": "Guest Experience · Transfer Recovery",
+  "role": "Guest Relations",
+  "professional": "Giulia Rossi",
+  "steps": [
+    {
+      "id": 1,
+      "title": "Cancellazione improvvisa del transfer",
+      "time": 40,
+      "status": "CANCELLED",
+      "detail": "Fornitore non disponibile",
+      "situation": "Una coppia di ospiti deve raggiungere una cena prenotata fuori città. Il transfer organizzato dall’hotel comunica improvvisamente che non potrà effettuare il servizio.",
+      "dialogue": [
+        [
+          "GR",
+          "Giulia Rossi · Guest Relations",
+          "Il transfer è stato cancellato. Devo prendere in carico il problema e trovare un’alternativa affidabile."
+        ],
+        [
+          "MT",
+          "Mr. Taylor · Ospite",
+          "La cena è prenotata e non possiamo arrivare in ritardo. Cosa possiamo fare?"
+        ]
+      ],
+      "choices": [
+        {
+          "id": "A",
+          "title": "Invito gli ospiti a cercare autonomamente un taxi",
+          "detail": "Comunico il problema ma trasferisco agli ospiti la ricerca della soluzione.",
+          "scores": {
+            "problem": 28,
+            "communication": 45,
+            "guest": 25,
+            "priority": 30
+          },
+          "feedback": "La comunicazione è chiara, ma l’hotel perde ownership del disservizio. L’ospite percepisce di essere lasciato solo nel momento di maggiore bisogno.",
+          "kpi": {
+            "resolution": "18 min",
+            "satisfaction": "-18%",
+            "risk": "Alto",
+            "cost": "€0"
+          },
+          "udl": {
+            "engagement": 35,
+            "representation": 55,
+            "action": 30
+          },
+          "nextLine": "Capisco la vostra urgenza, ma al momento vi suggerisco di provare a cercare un taxi."
+        },
+        {
+          "id": "B",
+          "title": "Verifico subito alternative e comunico tempi e costi",
+          "detail": "Prendo in carico l’imprevisto e confronto taxi/NCC prima di aggiornare gli ospiti.",
+          "scores": {
+            "problem": 92,
+            "communication": 88,
+            "guest": 91,
+            "priority": 90
+          },
+          "feedback": "Scelta professionale: mantieni l’ownership del problema, riduci l’incertezza e prepari una comunicazione basata su dati verificati.",
+          "kpi": {
+            "resolution": "8 min",
+            "satisfaction": "+20%",
+            "risk": "Basso",
+            "cost": "€35"
+          },
+          "udl": {
+            "engagement": 90,
+            "representation": 88,
+            "action": 92
+          },
+          "nextLine": "Mi dispiace per il disservizio. Verifico subito due alternative e torno da voi con tempi e costi precisi."
+        },
+        {
+          "id": "C",
+          "title": "Attendo che il fornitore trovi una soluzione",
+          "detail": "Rimando l’attivazione di un piano B per alcuni minuti.",
+          "scores": {
+            "problem": 35,
+            "communication": 40,
+            "guest": 32,
+            "priority": 20
+          },
+          "feedback": "L’attesa conserva una possibilità, ma fa perdere tempo prezioso. In una situazione temporale critica serve attivare almeno un’alternativa in parallelo.",
+          "kpi": {
+            "resolution": "24 min",
+            "satisfaction": "-10%",
+            "risk": "Alto",
+            "cost": "€20"
+          },
+          "udl": {
+            "engagement": 42,
+            "representation": 45,
+            "action": 28
+          },
+          "nextLine": "Aspettiamo ancora qualche minuto: il fornitore potrebbe riuscire a recuperare il servizio."
+        }
+      ],
+      "priorities": [
+        [
+          "Prendere in carico il disservizio",
+          "critical",
+          "Evitare che la soluzione ricada interamente sull’ospite."
+        ],
+        [
+          "Verificare alternative reali",
+          "high",
+          "Taxi/NCC, tempi, costo e affidabilità."
+        ],
+        [
+          "Aggiornare gli ospiti",
+          "high",
+          "Dare un tempo preciso per il prossimo aggiornamento."
+        ],
+        [
+          "Documentare la cancellazione",
+          "low",
+          "Registrare il problema per il follow-up."
+        ]
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Valutazione delle alternative",
+      "time": 32,
+      "status": "OPTIONS",
+      "detail": "Taxi 10 min · NCC 25 min",
+      "situation": "Hai due opzioni: un taxi disponibile tra 10 minuti ma con percorrenza incerta, oppure un NCC disponibile tra 25 minuti a costo maggiore. La cena inizia tra 40 minuti.",
+      "dialogue": [
+        [
+          "GR",
+          "Giulia Rossi · Guest Relations",
+          "Ho due alternative. Devo confrontare tempo, affidabilità, costo e rischio di ritardo."
+        ],
+        [
+          "ST",
+          "Mrs. Taylor · Ospite",
+          "Per noi è importante arrivare in tempo, ma vogliamo sapere anche il costo."
+        ]
+      ],
+      "choices": [
+        {
+          "id": "A",
+          "title": "Prenoto subito il taxi perché arriva prima",
+          "detail": "Privilegio la rapidità senza condividere pienamente rischi e condizioni.",
+          "scores": {
+            "problem": 70,
+            "communication": 48,
+            "guest": 62,
+            "priority": 80
+          },
+          "feedback": "Scelta veloce ma poco trasparente. Una decisione robusta deve rendere chiari anche rischio di ritardo e condizioni.",
+          "kpi": {
+            "resolution": "10 min",
+            "satisfaction": "+4%",
+            "risk": "Medio",
+            "cost": "€28"
+          },
+          "udl": {
+            "engagement": 62,
+            "representation": 50,
+            "action": 70
+          },
+          "nextLine": "Il taxi arriva prima. Lo prenoto subito, anche se il tempo di percorrenza non è garantito."
+        },
+        {
+          "id": "B",
+          "title": "Presento entrambe le alternative e consiglio quella più coerente",
+          "detail": "Spiego tempi, rischi e costi e accompagno gli ospiti verso una scelta informata.",
+          "scores": {
+            "problem": 94,
+            "communication": 96,
+            "guest": 94,
+            "priority": 92
+          },
+          "feedback": "Ottima gestione: rendi leggibili le alternative, formuli una raccomandazione e mantieni l’ospite dentro il processo decisionale.",
+          "kpi": {
+            "resolution": "11 min",
+            "satisfaction": "+24%",
+            "risk": "Basso",
+            "cost": "€30"
+          },
+          "udl": {
+            "engagement": 95,
+            "representation": 97,
+            "action": 93
+          },
+          "nextLine": "Il taxi arriva tra 10 minuti; l’NCC tra 25 ma è più affidabile. Considerando l’orario della cena, vi consiglio il taxi."
+        },
+        {
+          "id": "C",
+          "title": "Prenoto l’NCC più costoso senza informare prima gli ospiti",
+          "detail": "Scelgo l’opzione più affidabile, ma introduco un costo aggiuntivo senza condivisione.",
+          "scores": {
+            "problem": 72,
+            "communication": 30,
+            "guest": 50,
+            "priority": 65
+          },
+          "feedback": "La soluzione può essere valida, ma manca trasparenza sul costo. La qualità del servizio include consenso informato e chiarezza.",
+          "kpi": {
+            "resolution": "25 min",
+            "satisfaction": "-3%",
+            "risk": "Medio",
+            "cost": "€65"
+          },
+          "udl": {
+            "engagement": 52,
+            "representation": 42,
+            "action": 68
+          },
+          "nextLine": "Ho prenotato l’NCC perché è più affidabile. Il costo però sarà superiore a quello previsto."
+        }
+      ],
+      "priorities": [
+        [
+          "Confrontare il vincolo temporale",
+          "critical",
+          "La cena definisce la finestra massima utile."
+        ],
+        [
+          "Valutare affidabilità e rischio",
+          "high",
+          "Non considerare solo il tempo di arrivo del mezzo."
+        ],
+        [
+          "Rendere trasparenti costi e limiti",
+          "high",
+          "Consentire una decisione informata."
+        ],
+        [
+          "Confermare targa e orario",
+          "medium",
+          "Chiudere il ciclo operativo."
+        ]
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Gestione simultanea delle priorità",
+      "time": 20,
+      "status": "MULTI-TASK",
+      "detail": "Nuovo ospite al desk",
+      "situation": "Mentre finalizzi il nuovo transfer arriva un altro ospite che chiede assistenza urgente per un bagaglio smarrito. La coppia attende ancora la conferma definitiva.",
+      "dialogue": [
+        [
+          "NG",
+          "Nuovo ospite",
+          "La compagnia aerea ha perso il mio bagaglio e ho bisogno di assistenza."
+        ],
+        [
+          "GR",
+          "Giulia Rossi · Guest Relations",
+          "Devo chiudere il task in scadenza e allo stesso tempo riconoscere la nuova urgenza."
+        ]
+      ],
+      "choices": [
+        {
+          "id": "A",
+          "title": "Interrompo la prima gestione e passo al nuovo ospite",
+          "detail": "Prendo subito in carico il bagaglio smarrito lasciando aperto il transfer.",
+          "scores": {
+            "problem": 55,
+            "communication": 58,
+            "guest": 60,
+            "priority": 25
+          },
+          "feedback": "Mostri reattività, ma perdi il controllo di un’attività quasi conclusa e con scadenza imminente.",
+          "kpi": {
+            "resolution": "16 min",
+            "satisfaction": "-8%",
+            "risk": "Alto",
+            "cost": "€30"
+          },
+          "udl": {
+            "engagement": 60,
+            "representation": 58,
+            "action": 45
+          },
+          "nextLine": "Mi occupo subito del bagaglio. La conferma del transfer resta momentaneamente in sospeso."
+        },
+        {
+          "id": "B",
+          "title": "Confermo il transfer, aggiorno la coppia e poi prendo in carico il nuovo ospite",
+          "detail": "Chiudo il task più urgente e comunico al nuovo ospite un tempo di presa in carico.",
+          "scores": {
+            "problem": 96,
+            "communication": 94,
+            "guest": 93,
+            "priority": 98
+          },
+          "feedback": "Gestione solida delle priorità: chiudi il task con scadenza, riduci l’incertezza e riconosci immediatamente la nuova richiesta.",
+          "kpi": {
+            "resolution": "6 min",
+            "satisfaction": "+23%",
+            "risk": "Basso",
+            "cost": "€30"
+          },
+          "udl": {
+            "engagement": 96,
+            "representation": 91,
+            "action": 98
+          },
+          "nextLine": "Confermo il taxi in arrivo tra 9 minuti. Subito dopo mi occupo del bagaglio; grazie per l’attesa."
+        },
+        {
+          "id": "C",
+          "title": "Chiedo al nuovo ospite di tornare più tardi senza spiegazioni",
+          "detail": "Proteggo il task principale ma non gestisco l’attesa del nuovo cliente.",
+          "scores": {
+            "problem": 58,
+            "communication": 22,
+            "guest": 30,
+            "priority": 70
+          },
+          "feedback": "La priorità principale viene protetta, ma la comunicazione genera frizione. Gestire le priorità significa anche gestire l’attesa.",
+          "kpi": {
+            "resolution": "7 min",
+            "satisfaction": "-12%",
+            "risk": "Medio",
+            "cost": "€30"
+          },
+          "udl": {
+            "engagement": 38,
+            "representation": 35,
+            "action": 62
+          },
+          "nextLine": "Deve tornare più tardi. In questo momento non posso occuparmi del suo caso."
+        }
+      ],
+      "priorities": [
+        [
+          "Chiudere la conferma del transfer",
+          "critical",
+          "Task quasi concluso e con scadenza immediata."
+        ],
+        [
+          "Riconoscere il nuovo ospite",
+          "high",
+          "Comunicare un tempo realistico di presa in carico."
+        ],
+        [
+          "Prendere in carico il bagaglio",
+          "high",
+          "Avviare il caso subito dopo la conferma."
+        ],
+        [
+          "Aggiornare i due casi",
+          "medium",
+          "Registrare azioni e follow-up."
+        ]
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Camera non pronta al check-in",
+      "time": 25,
+      "status": "ROOM DELAY",
+      "detail": "Housekeeping in ritardo",
+      "situation": "Una nuova coppia arriva in hotel dopo un lungo viaggio. La camera assegnata non è ancora pronta e housekeeping stima altri 25 minuti di attesa. Gli ospiti mostrano stanchezza e irritazione.",
+      "dialogue": [
+        [
+          "GR",
+          "Giulia Rossi · Guest Relations",
+          "La camera non è ancora pronta. Devo ridurre l’attesa percepita e offrire una soluzione concreta."
+        ],
+        [
+          "GT",
+          "Ospite",
+          "Siamo stanchi e ci aspettavamo di poter entrare subito in camera. Quanto dobbiamo ancora aspettare?"
+        ]
+      ],
+      "choices": [
+        {
+          "id": "D-A",
+          "title": "Chiedo semplicemente agli ospiti di attendere nella hall",
+          "detail": "Comunico il ritardo senza proporre una soluzione alternativa.",
+          "scores": {
+            "problem": 35,
+            "communication": 48,
+            "guest": 30,
+            "priority": 40
+          },
+          "feedback": "La comunicazione è corretta ma insufficiente. L’attesa viene trasferita interamente sull’ospite senza ridurne il disagio.",
+          "kpi": {
+            "resolution": "25 min",
+            "satisfaction": "-15%",
+            "risk": "Alto",
+            "cost": "€0"
+          },
+          "udl": {
+            "engagement": 40,
+            "representation": 52,
+            "action": 35
+          },
+          "nextLine": "La camera sarà pronta tra circa 25 minuti. Vi chiedo di attendere nella hall."
+        },
+        {
+          "id": "D-B",
+          "title": "Verifico una camera alternativa e offro una soluzione ponte",
+          "detail": "Controllo disponibilità, deposito bagagli e accesso alla lounge con refreshment.",
+          "scores": {
+            "problem": 94,
+            "communication": 92,
+            "guest": 96,
+            "priority": 91
+          },
+          "feedback": "Scelta molto efficace: agisci sul problema, riduci l’attesa percepita e mantieni alta la qualità dell’esperienza.",
+          "kpi": {
+            "resolution": "10 min",
+            "satisfaction": "+26%",
+            "risk": "Basso",
+            "cost": "€15"
+          },
+          "udl": {
+            "engagement": 96,
+            "representation": 92,
+            "action": 95
+          },
+          "nextLine": "Verifico subito se possiamo assegnarvi una camera alternativa. Nel frattempo custodiamo i bagagli e vi offriamo accesso alla lounge."
+        },
+        {
+          "id": "D-C",
+          "title": "Offro subito uno sconto senza intervenire sull’attesa",
+          "detail": "Compenso economicamente il disagio ma non risolvo il problema operativo.",
+          "scores": {
+            "problem": 45,
+            "communication": 62,
+            "guest": 58,
+            "priority": 38
+          },
+          "feedback": "La compensazione può aiutare, ma non sostituisce la gestione operativa dell’attesa. Prima serve una soluzione concreta.",
+          "kpi": {
+            "resolution": "25 min",
+            "satisfaction": "+2%",
+            "risk": "Medio",
+            "cost": "€40"
+          },
+          "udl": {
+            "engagement": 58,
+            "representation": 60,
+            "action": 48
+          },
+          "nextLine": "Posso applicare uno sconto per il disagio, ma la camera richiederà ancora circa 25 minuti."
+        }
+      ],
+      "priorities": [
+        [
+          "Ottenere un ETA reale da housekeeping",
+          "critical",
+          "Serve un tempo attendibile prima di formulare promesse."
+        ],
+        [
+          "Verificare camere alternative",
+          "high",
+          "Ridurre o eliminare l’attesa se l’inventario lo consente."
+        ],
+        [
+          "Gestire bagagli e comfort immediato",
+          "high",
+          "Ridurre il disagio mentre si attende."
+        ],
+        [
+          "Aggiornare gli ospiti entro pochi minuti",
+          "medium",
+          "Evitare che l’attesa diventi incertezza."
+        ]
+      ]
+    }
+  ]
+}
