@@ -1,3 +1,0 @@
-ITSphere Human Scene
-Receptionist dietro il desk, ospiti davanti al desk, tre modelli GLB locali.
-Nessuna dipendenza esterna per i personaggi 3D.
