@@ -115,14 +115,8 @@ const views={overview:{p:[9.5,5.4,10.5],t:[0,1.45,0]},desk:{p:[4.8,3.25,5.8],t:[
 let resources=[],activeResource=null;
 const gltfLoader=new GLTFLoader();
 const PREMIUM_MODEL_URLS={
-  receptionist:[
-    "./models/harper.glb",
-    "https://www.innerscene.com/api/library/locomotion-collection-harper-3d-person-animated-797e1e2a/download"
-  ],
-  guest:[
-    "./models/jordan.glb",
-    "https://www.innerscene.com/api/library/locomotion-collection-jordan-3d-person-animated-911f1584/download"
-  ]
+  receptionist:["./models/harper.glb"],
+  guest:["./models/jordan.glb"]
 };
 let premiumMode=false;
 let speakingCharacter=null;
@@ -276,7 +270,22 @@ function setupPremiumCharacter(source,animations,{x,z,height=1.98,tint=0xffffff,
   world.add(wrapper);
   return wrapper;
 }
+async function getModelManifest(){
+  try{
+    const r=await fetch("./models/manifest.json",{cache:"no-store"});
+    if(!r.ok) return {enabled:false};
+    return await r.json();
+  }catch(e){
+    return {enabled:false};
+  }
+}
 async function loadPremiumCharacters(){
+  const manifest=await getModelManifest();
+  if(!manifest?.enabled){
+    if(UI.characterModeBadge)UI.characterModeBadge.textContent="Modelli locali non installati";
+    console.info("Personaggi GLB disattivati. Carica models/harper.glb e models/jordan.glb, poi imposta enabled:true in models/manifest.json.");
+    return;
+  }
   if(UI.characterModeBadge)UI.characterModeBadge.textContent="Caricamento persone realistiche…";
   try{
     const [harper,jordan]=await Promise.all([
@@ -319,7 +328,7 @@ async function loadPremiumCharacters(){
       UI.characterModeBadge.classList.add("is-premium");
     }
   }catch(err){
-    console.warn("Personaggi realistici non disponibili: uso fallback locale",err);
+    console.warn("Modelli GLB locali non disponibili: uso fallback 3D. Verifica models/harper.glb e models/jordan.glb.",err);
     premiumMode=false;
     // Il fallback resta operativo, ma viene mantenuto dietro la UI senza spacciarlo per modello realistico.
     if(UI.characterModeBadge){
@@ -634,19 +643,32 @@ function updateMotion(char,dt,t){
         const done=char.userData.resolve;char.userData.resolve=null;if(done)done();
       }else{
         dir.normalize();char.position.addScaledVector(dir,Math.min(dist,char.userData.speed*dt));char.rotation.y=Math.atan2(dir.x,dir.z);
-        if(char.userData.role==="staff"){
+        if(!char.userData.mixer){
+          resetRig(r);
+          const cyc=Math.sin(t*9);
+          applyRigOffset(r.leftUpLeg,cyc*.32,0,0);
+          applyRigOffset(r.rightUpLeg,-cyc*.32,0,0);
+          applyRigOffset(r.leftLeg,Math.max(0,-cyc)*.18,0,0);
+          applyRigOffset(r.rightLeg,Math.max(0,cyc)*.18,0,0);
+          applyRigOffset(r.leftArm,-cyc*.20,0,0);
+          applyRigOffset(r.rightArm,cyc*.20,0,0);
+        }else if(char.userData.role==="staff"){
           const cyc=Math.sin(t*9);applyRigOffset(r.leftUpLeg,cyc*.28,0,0);applyRigOffset(r.rightUpLeg,-cyc*.28,0,0);applyRigOffset(r.leftArm,-cyc*.18,0,0);applyRigOffset(r.rightArm,cyc*.18,0,0);
         }
       }
-    }else if(!reduced&&char.userData.role==="staff"){
-      const breathe=Math.sin(t*1.55+char.userData.phase);
-      applyRigOffset(r.spine,breathe*.006,0,0);applyRigOffset(r.head,0,Math.sin(t*.8+char.userData.phase)*.012,0);
     }
     if(speakingCharacter===char){
       const pulse=.5+.5*Math.sin(t*18+speechPulse);
-      if(r.jaw)applyRigOffset(r.jaw,pulse*.045,0,0);
+      if(r.jaw){
+        const base=r.jaw.userData?.itsBaseRotation;
+        if(base)r.jaw.rotation.x=base.x+pulse*.045;
+        else applyRigOffset(r.jaw,pulse*.045,0,0);
+      }
       char.userData.morphs?.forEach(({mesh,index})=>{mesh.morphTargetInfluences[index]=pulse*.55});
-      applyRigOffset(r.head,Math.sin(t*4)*.012,0,0);
+      if(r.head){
+        const base=r.head.userData?.itsBaseRotation;
+        if(base)r.head.rotation.x=base.x+Math.sin(t*4)*.012;
+      }
     }else{
       char.userData.morphs?.forEach(({mesh,index})=>{mesh.morphTargetInfluences[index]*=.75});
     }

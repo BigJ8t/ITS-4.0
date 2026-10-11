@@ -1,19 +1,11 @@
-# Asset 3D usati
+# Asset 3D
 
-## Harper — receptionist / ospite donna
+## Harper
+- File locale atteso: `models/harper.glb`
+- Pagina: https://www.innerscene.com/tools/library/3d-parts/locomotion-collection-harper-3d-person-animated-797e1e2a
 
-- Fonte: Innerscene 3D Parts Library
-- Asset: Locomotion collection - Harper 3D Person, Animated
-- Tipo: donna adulta in business clothes, riggata e animata
-- Licenza: CC0 / public domain
-- URL pagina: https://www.innerscene.com/tools/library/3d-parts/locomotion-collection-harper-3d-person-animated-797e1e2a
+## Jordan
+- File locale atteso: `models/jordan.glb`
+- Pagina: https://www.innerscene.com/tools/library/3d-parts/locomotion-collection-jordan-3d-person-animated-911f1584
 
-## Jordan — ospiti uomo
-
-- Fonte: Innerscene 3D Parts Library
-- Asset: Locomotion collection - Jordan 3D Person, Animated
-- Tipo: uomo adulto in business clothes, riggato e animato
-- Licenza: CC0 / public domain
-- URL pagina: https://www.innerscene.com/tools/library/3d-parts/locomotion-collection-jordan-3d-person-animated-911f1584
-
-Questa build non usa Xbot come ospite.
+Scarica i due file GLB e rinominali esattamente `harper.glb` e `jordan.glb`.

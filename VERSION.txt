@@ -1,0 +1,4 @@
+ITSphere Human Models v8
+harper.glb and jordan.glb are included locally.
+No Innerscene/CORS dependency.
+Character motion falls back to articulated node animation when GLB clips are absent.
